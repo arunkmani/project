@@ -1,7 +1,6 @@
 import numpy as np
 import random
 import scipy.special
-import os
 def transpose(x):
     temp=x.shape
     swapped=np.zeros(shape=(temp[1],temp[0]))
@@ -67,43 +66,46 @@ class NeuralNetwork():
 
         #begin fucking with the weights of the input hidden layer
 
-        self.wih += self.lr*np.dot((hidden_errors*hidden_output*(1-hidden_output)),np.transpose(i))
-
-    def save(self):
-        myfile="wih.txt"
-        if os.path.isfile(myfile):
-            os.remove(myfile)
-        file = open("wih.txt","w") 
-        for y in range(self.wih.shape[0]):
-            for z in range(self.wih.shape[1]):
-                file.write(str(self.wih[y][z])+"\n")
-        file.close()
-        print "Half Done"
-        myfile="who.txt"
-        if os.path.isfile(myfile):
-            os.remove(myfile)
-        file = open("who.txt","w") 
-        for y in range(self.who.shape[0]):
-            for z in range(self.who.shape[1]):
-                file.write(str(self.who[y][z])+"\n")
-        file.close()
-        print "writing done"
-        
-    def load(self):
-        print "Loading values"
-        file = open("wih.txt","r") 
-        for y in range(self.wih.shape[0]):
-            for z in range(self.wih.shape[1]):
-                number=file.readline()
-                self.wih[y][z]=float(number)
-        file.close()
+        self.wih += self.lr*np.dot((hidden_errors*hidden_input*(1-hidden_output)),np.transpose(i))
 
 
-        file = open("who.txt","r") 
-        for y in range(self.who.shape[0]):
-            for z in range(self.who.shape[1]):
-                number=file.readline()
-                self.who[y][z]=float(number)
-        print "loading done"
-        file.close()
 
+			
+
+a=NeuralNetwork(2,10,1)
+for i in range(10000):
+	print "Operation"+str(i)
+	x=random.randint(0,1)
+	y=random.randint(0,1)
+	inp=[x,y]
+	a.feedforward(inp,not(x and y))
+t=0
+correct=0
+for i in range(10000):
+	x=random.randint(0,1)
+	y=random.randint(0,1)
+	inp=[x,y]
+	r=a.guess(inp)
+	t=t+(abs((x*y)-r))
+	'''if r<=.50 and x^y==0:
+		correct=correct+1
+	if r>=.50 and x^y==1:
+		correct=correct+1'''
+print "Avg:"+str(t/10000)
+s=a.guess([0,0])
+print s
+print not(0 and 0)
+
+s=a.guess([0,1])
+print s
+print not (0 and 1)
+
+s=a.guess([1,0])
+print s
+print not(1 and 0)
+
+s=a.guess([1,1])
+print s
+print not(1 and 1)
+
+print "accuracy:"+str((correct/10000)*100)
